@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include<assert.h>
 #include<math.h>
 #include<limits.h>
 
 
-#define N 4
+#define N 8
 
 
 //n c'est la taille de la matrice carréé
@@ -79,45 +80,6 @@ int** matriceadjacente(int n, int M , float p){
 
 }
 
-/**retourne la valeur de degré entrante*/
-int degreentrant(int n , int M , float p){
-    int max1=0;
-    int res1=0;
-    int ** matrix = matriceadjacente(n, M , p);
-    for( i = 0; i < n; i++) {
-        for( j = 0; j < n; j++) {
-           if(matrix[i][j]==1){
-              res1++;
-           }      
-    }
-    if(res1>max1){
-            max1=res1;
-           }
-    res1=0;
-    }
-return max1;
-}
-
-/**retourne la valeur de degré Sortante*/
-int degresortant(int n , int M , float p){
- int max2=0;
- int res2=0;
-    int ** matrix = matriceadjacente(n, M , p);
-for( j = 0; j < n; j++) {
-        for( i = 0; i < n; i++) {
-           if(matrix[i][j]==1){
-              res2++;
-           }
-    }   
-    if(res2>max2){
-            max2=res2;
-           }    
-    res2=0;
-}
-return max2;
-}
-
-
 /**les degres des matrices*/
 int DegresGraphes(int **matrice,int taille)
 {
@@ -141,6 +103,7 @@ int DegresGraphes(int **matrice,int taille)
     }
     return degres;
 }
+
 /**la Mtrice diagonale*/
 int **DiagonalMatrice(int **matrice,int taille)
 {
@@ -216,100 +179,85 @@ void printmatrix(int ** matrix , int n){
 }
 
 /**fonction qui teste la connnexité */
-void testconnexe(int ** matrix , int n , int s){
-    int **newMatrice = (int**)malloc(n*sizeof(int*));
-    for ( i=0; i<n; i++){
-        newMatrice[i] = (int*)malloc(n*sizeof(int));
-    }
-    newMatrice = PuissanceMatriceConnex(matrix,n,s);
-    for(i=0 ; i<n ; i++){
-        for(j=0 ; j<n ; j++){
-              if(newMatrice[i][j]==0){
-                   printf("cette matrice n'est pas connex\n");
-                   break;
-              }
+int allOnes(int **m) {
+    for (i = 0; i < N; i++) {
+        for (j = 0; j < N; j++) {
+            if (m[i][j] != 1) {
+                return 0;  // renvoie 0 si un élément n'est pas égal à 1
+            }
         }
     }
-    printf("cette matrice est connexe \n");
+    return 1;  // renvoie 1 si tous les éléments sont égaux à 1
+}
+
+void testOne(int **m) {
+
+    if (allOnes(m)) {
+        printf("le graphe  est connex\n");
+    } else {
+        printf("le graphes n'est pas connex\n");
+    }
 }
 
 
-void floydWarshall(int graph[N][N]) {
-    int dist[N][N], i, j, k;
-    
-    // Initialiser la matrice des distances
-    for(i = 0; i < N; i++) {
-        for(j = 0; j < N; j++) {
-            dist[i][j] = graph[i][j];
-        }
-    }
-    
-    // Calculer les distances minimales
-    for(k = 0; k < N; k++) {
-        for(i = 0; i < N; i++) {
-            for(j = 0; j < N; j++) {
-                if(dist[i][k] != INT_MAX && dist[k][j] != INT_MAX
-                   && dist[i][k] + dist[k][j] < dist[i][j]) {
-                    dist[i][j] = dist[i][k] + dist[k][j];
-                }
-            }
-        }
-    }
-    
-    // Afficher les distances minimales
-    printf("Matrice des distances minimales :\n");
-    for(i = 0; i < N; i++) {
-        for(j = 0; j < N; j++) {
-            if(dist[i][j] == INT_MAX) {
-                printf("INF ");
-            }
-            else {
-                printf("%d ", dist[i][j]);
-            }
-        }
-        printf("\n");
-
-    }
-}
-
-int **ProduitMatricePlusCousChemin(int **matrice1, int **matrice2, int taille)
-{    
-    int n;
+/**fonction qui detemine le plus court chemin  */
+int **ProduitMatriceFloyd(int **matrice1, int **matrice2, int taille)
+{
     int **newMatrice = (int**)malloc(taille*sizeof(int*));
-    for ( i=0; i<taille; i++)
+    for (int i=0; i<taille; i++)
         newMatrice[i] = (int*)malloc(taille*sizeof(int));
-    for( i=0;i<taille;i=i+1)
+
+    for(int i=0;i<taille;i=i+1)
     {
-        for( j=0;j<taille;j=j+1)
+        for(int j=0;j<taille;j=j+1)
         {
-            newMatrice[i][j]=0;
-            for( n=0;n<taille;n=n+1)
+            newMatrice[i][j]=matrice1[i][j];
+            for(int n=0;n<taille;n=n+1)
             {
-                newMatrice[i][j]= fmin(newMatrice[i][j],matrice1[i][n]+matrice2[n][j]);
+                newMatrice[i][j]=fmin(newMatrice[i][j],matrice1[i][n]+matrice2[n][j]);
             }
         }
     }
     return newMatrice;
 }
 
-
-int **PuissanceMatricepluscourtschemin(int **matrice, int taille, int puissance)
-{    
-
-    matrice = diagonale0(matrice,taille);
+int** PlusCourtChemin(int **matrice, int taille)
+{
     int **newMatrice = (int**)malloc(taille*sizeof(int*));
-    for ( i=0; i<taille; i++){
+    for (int i=0; i<taille; i++)
         newMatrice[i] = (int*)malloc(taille*sizeof(int));
-        newMatrice=ProduitMatricePlusCousChemin(matrice,matrice,taille);
-    }
-    for( i=2;i<puissance;i=i+1)
+    
+    int **newMatrice2 = (int**)malloc(taille*sizeof(int*));
+    for (int i=0; i<taille; i++)
+        newMatrice2[i] = (int*)malloc(taille*sizeof(int));
+
+    for(int i=0;i<taille;i=i+1)
     {
-        newMatrice=ProduitMatricePlusCousChemin(matrice,newMatrice,taille);
+        for(int j=0;j<taille;j=j+1)
+        {
+
+            if(matrice[i][j]==0)
+            {
+                newMatrice[i][j]=50000;
+                newMatrice2[i][j]=50000;
+            }
+            else
+            {
+                newMatrice[i][j]=matrice[i][j];
+                newMatrice2[i][j]=matrice[i][j];
+            }
+        }
     }
-     return newMatrice;
+    newMatrice=diagonale0(newMatrice,taille);
+    newMatrice2=diagonale0(newMatrice,taille);
+    newMatrice=ProduitMatriceFloyd(newMatrice,newMatrice,taille);
+
+    for(int i=2;i<taille;i=i+1)
+    {
+        newMatrice=ProduitMatriceFloyd(newMatrice2,newMatrice,taille);
+    }
+
+    return newMatrice;
 }
-
-
-
 
 
