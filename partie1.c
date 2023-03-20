@@ -66,31 +66,6 @@ int main() {
     printf("\n");
     
 
-    // int graph[N][N] = { {0, 5, INT_MAX, 10},
-    //                     {INT_MAX, 0, 3, INT_MAX},
-    //                     {INT_MAX, INT_MAX, 0, 1},
-    //                     {INT_MAX, INT_MAX, INT_MAX, 0} };
-
-    
-    // printf("Matrice d'adjacence :\n");
-    // for(int i = 0; i < N; i++) {
-    //     for(int j = 0; j < N; j++) {
-    //         if(graph[i][j] == INT_MAX) {
-    //             printf("INF ");j
-    //         }
-    //         else {
-    //             printf("%d ", graph[i][j]);
-    //         }
-    //     }
-    //     printf("\n");
-
-    // }
-    
-    // floydWarshall(graph);
-    
-    // return 0;
-     
-
     // libération de la mémoire allouée pour la matrice
      freematrix(matrix1,n);
      freematrix(matrix2,n);
@@ -99,3 +74,4 @@ int main() {
 
 
 }
+
