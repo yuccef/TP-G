@@ -1,9 +1,88 @@
 #include<stdio.h>
 #include<assert.h>
 #include"partie1.h"
+#include"graph.h"
 
 
 #define N 8
+
+
+queue *createQueue() {
+    queue *q = malloc(sizeof(queue));
+    q->front = -1;
+    q->rear = -1;
+    return q;
+}
+
+// Checks for empty queue
+int isEmpty(queue *q) {
+    if (q->rear == -1)
+        return 1;
+    else
+        return 0;
+}
+// Inserts item at start of queue
+void enqueue(queue *q, int value) {
+    if (q->rear == SIZE - 1)
+        printf("\nQueue is Full!!");
+    else {
+        if (q->front == -1)
+            q->front = 0;
+        q->rear++;
+        q->items[q->rear] = value;
+    }
+}
+
+// Returns item at front of queue and removes it from queue
+int dequeue(queue *q) {
+    int item;
+    if (isEmpty(q)) {
+        printf("Queue is empty");
+        item = -1;
+    }
+    else {
+        item = q->items[q->front];
+        q->front++;
+        if (q->front > q->rear) {
+            q->front = q->rear = -1;
+        }
+    }
+    return item;
+}
+
+// Returns element at front of queue
+int pollQueue(queue *q) { return q->items[q->front]; }
+
+//Parcours le graphe en utilisant la procédure de la vague
+void bfs(Graph *graph, int startVertex) {
+    queue *q = createQueue();
+
+    // Add to visited list and put in queue
+    graph->visited[startVertex] = 1;
+    enqueue(q, startVertex);
+    printf("Breadth first traversal from vertex %d is:\n", startVertex);
+
+    // Iterate while queue not empty
+    while (!isEmpty(q)) {
+        printf("%d ", pollQueue(q));
+        int currentVertex = dequeue(q);
+        
+
+        node *temp = graph->adjLists[currentVertex];
+        // Add all unvisited neighbours of current vertex to queue to be printed
+        // next
+        while (temp) {
+            int adjVertex = temp->vertex;
+            // Only add if neighbour is unvisited
+            if (graph->visited[adjVertex] == 0) {
+                graph->visited[adjVertex] = 1;
+                enqueue(q, adjVertex);
+            }
+            temp = temp->next;
+        }
+    }
+}
+
 /**Test*/
 int main() {  
 
@@ -12,7 +91,7 @@ int main() {
     int n = 8; // taille de la matrice carrée
     int M = 10; // borne supérieure des éléments de la matrice
     float p=0.5; // le nombre des arrets
-    int s=8 ; // la puissance choisi
+    //int s=8 ; // la puissance choisi
 
 
     int **matrix1 = generate_matrix(n, M, p);
@@ -66,11 +145,22 @@ int main() {
     printf("\n");
     
 
+
+    int numVertex=4,h=1;
+    Graph *graph;
+    
+    graph=graphAlloc(numVertex);
+    graph=graphCreat(matrix2,numVertex);
+    bfs(graph,h);
+    
+
     // libération de la mémoire allouée pour la matrice
      freematrix(matrix1,n);
      freematrix(matrix2,n);
      freematrix(matrix3,n);
      freematrix(matrix4,n);
+
+     return 0;
 
 
 }
