@@ -1,10 +1,21 @@
 #include<stdio.h>
 #include<assert.h>
-#include"partie1.h"
+#include"test.h"
 #include"graph.h"
 
 
 #define N 8
+
+// int Matrix1[8][8] = {
+//     {0,0,1,0,0,1,0,0},
+//     {0,0,0,0,0,0,1,1},
+//     {1,0,0,1,1,1,0,1},
+//     {0,0,1,0,0,0,1,0},
+//     {0,0,1,0,0,0,0,0},
+//     {1,0,1,0,0,0,1,1},
+//     {0,1,0,1,0,1,0,0},
+//     {0,1,1,0,0,1,0,0}
+// };
 
 
 queue *createQueue() {
@@ -81,6 +92,45 @@ void bfs(Graph *graph, int startVertex) {
             temp = temp->next;
         }
     }
+}
+
+/*min distance*/
+int minDistance(int mdist[], int vset[], int V) {
+    int minVal = INT_MAX;
+    static int minInd = -1; 
+    for (int i = 0; i < V; i++)
+        if (vset[i] == 0 && mdist[i] < minVal) {
+            minVal = mdist[i];
+            minInd = i;
+        }
+
+    return minInd;
+}
+
+/*Djikstra */
+void Dijkstra(int **graph, int taille, int src) {
+    int mdist[taille];  
+    int vset[taille];  
+                   
+
+    for (int i = 0; i < taille; i++) mdist[i] = INT_MAX, vset[i] = 0;
+
+    mdist[src] = 0;
+
+    for (int count = 0; count < taille - 1; count++) {
+        int u = minDistance(mdist, vset, taille);
+        vset[u] = 1;
+
+        for (int v = 0; v < taille; v++) {
+            if (!vset[v] && graph[u][v] != INT_MAX &&
+                mdist[u] + graph[u][v] < mdist[v])
+                mdist[v] = mdist[u] + graph[u][v];
+        }
+    }
+
+    //printmatrix(mdist, taille);
+
+    return;
 }
 
 /**Test*/

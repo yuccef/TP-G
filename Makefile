@@ -1,17 +1,17 @@
-all: partie1 graph.o 
+all: test graph.o 
 
 graph.o: graph.c graph.h
 	gcc -c graph.c
 
-partie1.o: partie1.c partie1.h
-	gcc -c partie1.c
+test.o: test.c test.h
+	gcc -c test.c
 
-partie1 : partie1.c partie1.h graph.c graph.h 
-	gcc -Wall -o partie1 partie1.c graph.c
+test : test.c test.h graph.c graph.h 
+	gcc -Wall -o test test.c graph.c
 
-debug: partie1.c partie1.h graph.c graph.h
-	gcc -g -Wall -o partie1 partie1.c graph.c
-	gdb partie1
+debug: test.c test.h graph.c graph.h
+	gcc -g -Wall -o test test.c graph.c
+	gdb test
 
 clean:
-	rm -f *.o partie1
+	rm -f *.o test
